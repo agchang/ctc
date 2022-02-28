@@ -1,6 +1,7 @@
 import torch
+from functools import cache
 
-
+@cache
 def _gaa(s: int, t, last=0):
     """
     e.g. _gaa(s = 4, t = "dog")
@@ -53,6 +54,11 @@ def _gaa(s: int, t, last=0):
 
 def naive_ctc_loss(log_probs, targets, input_lengths, target_lengths, blank=0, reduction="mean", zero_infinity=False):
     """
+    A naive implementation of CTC loss that generates all possible alignments to the target string given
+    an input length S.
+
+    This algorithm is exponential, so we clearly need to do better as this will be called at every minibatch.
+
     log_probs - (T, N, C) where T is sequence length, N is batch size, and C is number of classes
     targets - (N, S) where S is the max target size in a batch (so smaller targets must be padded)
     input_lengths - (N) lengths of inputs, each must be <= T

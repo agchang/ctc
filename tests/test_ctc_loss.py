@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
-from loss import naive_ctc_loss
-from loss import dp_ctc_loss
+from loss.dp_ctc_loss import dp_ctc_loss
 
 
 def test_ctc_loss_trivial():
@@ -29,7 +28,7 @@ def test_ctc_loss_trivial():
     # All outputs that align to "a" are
     # a (log(0.8)) = -0.2231
     ref_loss = F.ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
-    loss = dp_ctc_loss.dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
+    loss = dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
 
     assert torch.allclose(loss, ref_loss)
     # loss.backward()
@@ -67,7 +66,7 @@ def test_ctc_loss_basic():
     # Back to logspace:
     # np.log(0.92) = -0.0833
     ref_loss = F.ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
-    loss = dp_ctc_loss.dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
+    loss = dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
 
     assert torch.allclose(loss, ref_loss)
 
@@ -101,7 +100,7 @@ def test_ctc_loss_repeats():
     # All outputs that align to "aa" are
     # aεa - log(0.8) + log(0.4) + log(0.7) = -1.4961
     ref_loss = F.ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
-    loss = dp_ctc_loss.dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
+    loss = dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
 
     assert torch.allclose(loss, ref_loss)
 
@@ -145,7 +144,7 @@ def test_ctc_loss():
     #   np.exp(-1.783) + np.exp(-5.809) + 0.0 + np.exp(-8.517193191416236) = 0.1965
     # np.log(0.1965) = -1.626
     ref_loss = F.ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
-    loss = dp_ctc_loss.dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
+    loss = dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
 
     assert torch.allclose(loss, ref_loss)
     # loss.backward()
@@ -167,7 +166,7 @@ def test_ctc_loss_random_batch():
     ref_loss = F.ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
     print(f"ref took {time.perf_counter() - start}")
     start = time.perf_counter()
-    loss = dp_ctc_loss.dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
+    loss = dp_ctc_loss(input, target, input_lengths, target_lengths, reduction="none")
     print(f"dp took {time.perf_counter() - start}")
 
     assert torch.allclose(loss, ref_loss)

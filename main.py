@@ -1,4 +1,3 @@
-from __future__ import print_function
 import argparse
 import torch
 import torch.nn as nn
@@ -34,7 +33,20 @@ class Net2(nn.Module):
         self.resnet18.fc = nn.Conv2d(512, 11, kernel_size=(1, 1))
 
     def forward(self, x):
-        x = self.resnet18(x)
+        # Copied from _forward_impl in order to remove the
+        # torch.flatten() call.
+        x = self.resnet18.conv1(x)
+        x = self.resnet18.bn1(x)
+        x = self.resnet18.relu(x)
+        x = self.resnet18.maxpool(x)
+
+        x = self.resnet18.layer1(x)
+        x = self.resnet18.layer2(x)
+        x = self.resnet18.layer3(x)
+        x = self.resnet18.layer4(x)
+
+        x = self.resnet18.avgpool(x)
+        x = self.resnet18.fc(x)
         x = torch.mean(x, 2)  # (N, 11, 5)
         # NCW
         output = F.log_softmax(x, dim=1)

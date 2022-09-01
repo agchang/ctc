@@ -1,6 +1,7 @@
 import torch
 from functools import cache
 
+
 @cache
 def _gaa(s: int, t, last=0):
     """
@@ -52,7 +53,15 @@ def _gaa(s: int, t, last=0):
     return [t for t in torch.unique(torch.vstack(alignments), dim=0)]
 
 
-def naive_ctc_loss(log_probs, targets, input_lengths, target_lengths, blank=0, reduction="mean", zero_infinity=False):
+def naive_ctc_loss(
+    log_probs,
+    targets,
+    input_lengths,
+    target_lengths,
+    blank=0,
+    reduction="mean",
+    zero_infinity=False,
+):
     """
     A naive implementation of CTC loss that generates all possible alignments to the target string given
     an input length S.

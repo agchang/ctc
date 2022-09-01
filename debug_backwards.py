@@ -1,11 +1,9 @@
 import torch
-import pdb
-from torchviz import make_dot
 
-from main import Net2
+
 from loss.dp_ctc_loss import dp_ctc_loss
 
-#net = Net2()
+# net = Net2()
 
 T = 20
 C = 20
@@ -17,4 +15,4 @@ target_lengths = torch.randint(low=1, high=T, size=(N,), dtype=torch.long)
 target = torch.randint(low=1, high=C, size=(sum(target_lengths),), dtype=torch.long)
 loss = dp_ctc_loss(input, target, input_lengths, target_lengths)
 
-#make_dot(loss).render("viz", format="png")
+# make_dot(loss).render("viz", format="png")
